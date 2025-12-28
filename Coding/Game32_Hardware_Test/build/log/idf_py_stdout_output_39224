@@ -1,0 +1,175 @@
+Command: C:\Users\Bharg\.espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe E:\Applications\ESP32\esp-idf\tools/idf_monitor.py -p COM5 -b 115200 --toolchain-prefix xtensa-esp32-elf- --target esp32 --revision 0 D:\PlatformIO_Projects\Game32_Hardware_Test\build\Game32_Hardware_Test.elf D:\PlatformIO_Projects\Game32_Hardware_Test\build\bootloader\bootloader.elf --force-color -m 'C:\Users\Bharg\.espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe' 'E:\Applications\ESP32\esp-idf\tools\idf.py'
+[0;32mI (13) boot: ESP-IDF v5.5.1 2nd stage bootloader[0m
+[0;32mI (13) boot: compile time Dec 25 2025 19:56:52[0m
+[0;32mI (13) boot: Multicore bootloader[0m
+[0;32mI (14) boot: chip revision: v3.1[0m
+[0;32mI (16) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (20) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (24) boot.esp32: SPI Flash Size : 2MB[0m
+[0;32mI (27) boot: Enabling RNG early entropy source...[0m
+[0;32mI (32) boot: Partition Table:[0m
+[0;32mI (34) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (41) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (47) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (54) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (60) boot: End of partition table[0m
+[0;32mI (64) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=11030h ( 69680) map[0m
+[0;32mI (95) esp_image: segment 1: paddr=00021058 vaddr=3ffb0000 size=02678h (  9848) load[0m
+[0;32mI (99) esp_image: segment 2: paddr=000236d8 vaddr=40080000 size=0c940h ( 51520) load[0m
+[0;32mI (119) esp_image: segment 3: paddr=00030020 vaddr=400d0020 size=2ae80h (175744) map[0m
+[0;32mI (179) esp_image: segment 4: paddr=0005aea8 vaddr=4008c940 size=04128h ( 16680) load[0m
+[0;32mI (186) esp_image: segment 5: paddr=0005efd8 vaddr=50000000 size=00020h (    32) load[0m
+[0;32mI (194) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (195) boot: Disabling RNG early entropy source...[0m
+[0;32mI (205) cpu_start: Multicore app[0m
+[0;32mI (213) cpu_start: Pro cpu start user code[0m
+[0;32mI (213) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (214) app_init: Application information:[0m
+[0;32mI (214) app_init: Project name:     Game32_Hardware_Test[0m
+[0;32mI (219) app_init: App version:      1[0m
+[0;32mI (222) app_init: Compile time:     Dec 25 2025 19:55:54[0m
+[0;32mI (227) app_init: ELF file SHA256:  d033b27b4...[0m
+[0;32mI (231) app_init: ESP-IDF:          v5.5.1[0m
+[0;32mI (235) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (239) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (243) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (247) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (253) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (258) heap_init: At 3FFB3078 len 0002CF88 (179 KiB): DRAM[0m
+[0;32mI (264) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (269) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (274) heap_init: At 40090A68 len 0000F598 (61 KiB): IRAM[0m
+[0;33mW (281) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig[0m
+[0;32mI (293) spi_flash: detected chip: generic[0m
+[0;32mI (296) spi_flash: flash io: dio[0m
+[0;33mW (299) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;33mW (311) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (322) main_task: Started on CPU0[0m
+[0;32mI (332) main_task: Calling app_main()[0m
+[0;32mI (332) Game32: =================================[0m
+[0;32mI (332) Game32:   Game32 Hardware Test v1.0[0m
+[0;32mI (332) Game32: =================================[0m
+[0;32mI (332) Game32: ADC calibration enabled[0m
+[0;32mI (342) Game32: Buttons initialized[0m
+[0;32mI (342) Game32: Buzzer initialized on GPIO 15[0m
+[0;32mI (342) Game32: Testing buzzer with startup melody...[0m
+[0;32mI (1302) Game32: Initializing I2C for TFT display...[0m
+[0;32mI (1302) Game32: I2C initialized successfully[0m
+[0;32mI (1302) Game32: TFT display detected at address 0x3C[0m
+[0;32mI (1302) Game32: SSD1306 initialized successfully[0m
+[0;32mI (1842) Game32: Drawing test pattern...[0m
+[0;32mI (1872) Game32: TFT test pattern displayed[0m
+[0;32mI (1872) Game32: Testing brightness control methods...[0m
+[0;32mI (1872) Game32: Method 1: Testing Contrast (0x81)[0m
+[0;32mI (1872) Game32:   Contrast: 255/255[0m
+[0;32mI (1972) Game32:   Contrast: 251/255[0m
+[0;32mI (2072) Game32:   Contrast: 247/255[0m
+[0;32mI (2172) Game32:   Contrast: 243/255[0m
+[0;32mI (2272) Game32:   Contrast: 239/255[0m
+[0;32mI (2372) Game32:   Contrast: 235/255[0m
+[0;32mI (2472) Game32:   Contrast: 231/255[0m
+[0;32mI (2572) Game32:   Contrast: 227/255[0m
+[0;32mI (2672) Game32:   Contrast: 223/255[0m
+[0;32mI (2772) Game32:   Contrast: 219/255[0m
+[0;32mI (2872) Game32:   Contrast: 215/255[0m
+[0;32mI (2972) Game32:   Contrast: 211/255[0m
+[0;32mI (3072) Game32:   Contrast: 207/255[0m
+[0;32mI (3172) Game32:   Contrast: 203/255[0m
+[0;32mI (3272) Game32:   Contrast: 199/255[0m
+[0;32mI (3372) Game32:   Contrast: 195/255[0m
+[0;32mI (3472) Game32:   Contrast: 191/255[0m
+[0;32mI (3572) Game32:   Contrast: 187/255[0m
+[0;32mI (3672) Game32:   Contrast: 183/255[0m
+[0;32mI (3772) Game32:   Contrast: 179/255[0m
+[0;32mI (3872) Game32:   Contrast: 175/255[0m
+[0;32mI (3972) Game32:   Contrast: 171/255[0m
+[0;32mI (4072) Game32:   Contrast: 167/255[0m
+[0;32mI (4172) Game32:   Contrast: 163/255[0m
+[0;32mI (4272) Game32:   Contrast: 159/255[0m
+[0;32mI (4372) Game32:   Contrast: 155/255[0m
+[0;32mI (4472) Game32:   Contrast: 151/255[0m
+[0;32mI (4572) Game32:   Contrast: 147/255[0m
+[0;32mI (4672) Game32:   Contrast: 143/255[0m
+[0;32mI (4772) Game32:   Contrast: 139/255[0m
+[0;32mI (4872) Game32:   Contrast: 135/255[0m
+[0;32mI (4972) Game32:   Contrast: 131/255[0m
+[0;32mI (5072) Game32:   Contrast: 127/255[0m
+[0;32mI (5172) Game32:   Contrast: 123/255[0m
+[0;32mI (5272) Game32:   Contrast: 119/255[0m
+[0;32mI (5372) Game32:   Contrast: 115/255[0m
+[0;32mI (5472) Game32:   Contrast: 111/255[0m
+[0;32mI (5572) Game32:   Contrast: 107/255[0m
+[0;32mI (5672) Game32:   Contrast: 103/255[0m
+[0;32mI (5772) Game32:   Contrast: 99/255[0m
+[0;32mI (5872) Game32:   Contrast: 95/255[0m
+[0;32mI (5972) Game32:   Contrast: 91/255[0m
+[0;32mI (6072) Game32:   Contrast: 87/255[0m
+[0;32mI (6172) Game32:   Contrast: 83/255[0m
+[0;32mI (6272) Game32:   Contrast: 79/255[0m
+[0;32mI (6372) Game32:   Contrast: 75/255[0m
+[0;32mI (6472) Game32:   Contrast: 71/255[0m
+[0;32mI (6572) Game32:   Contrast: 67/255[0m
+[0;32mI (6672) Game32:   Contrast: 63/255[0m
+[0;32mI (6772) Game32:   Contrast: 59/255[0m
+[0;32mI (6872) Game32:   Contrast: 55/255[0m
+[0;32mI (6972) Game32:   Contrast: 51/255[0m
+[0;32mI (7072) Game32:   Contrast: 47/255[0m
+[0;32mI (7172) Game32:   Contrast: 43/255[0m
+[0;32mI (7272) Game32:   Contrast: 39/255[0m
+[0;32mI (7372) Game32:   Contrast: 35/255[0m
+[0;32mI (7472) Game32:   Contrast: 31/255[0m
+[0;32mI (7572) Game32:   Contrast: 27/255[0m
+[0;32mI (7672) Game32:   Contrast: 23/255[0m
+[0;32mI (7772) Game32:   Contrast: 19/255[0m
+[0;32mI (7872) Game32:   Contrast: 15/255[0m
+[0;32mI (7972) Game32:   Contrast: 11/255[0m
+[0;32mI (8072) Game32:   Contrast: 7/255[0m
+[0;32mI (8172) Game32:   Contrast: 3/255[0m
+[0;32mI (9272) Game32: Brightness test complete - reset to defaults[0m
+[0;32mI (9272) Game32: ✓ TFT display working[0m
+[1;31mE (9292) vfs_fat_sdmmc: sdmmc_card_init failed (0x107).[0m
+[1;31mE (9292) Game32: Failed to mount SD card: ESP_ERR_TIMEOUT[0m
+[0;33mW (9292) Game32: ✗ SD card not detected[0m
+[0;32mI (9292) Game32: =================================[0m
+[0;32mI (9292) Game32: Starting continuous monitoring...[0m
+[0;32mI (9302) Game32: Press buttons to hear different tones:[0m
+[0;32mI (9302) Game32:   UP=C4, DOWN=D4, LEFT=E4, RIGHT=F4[0m
+[0;32mI (9312) Game32:   A=G4, B=A4, START=B4, SELECT=C5[0m
+[0;32mI (9312) Game32: =================================[0m
+[0;32mI (9322) Game32: 🔋 Battery: 3.95V (80%)[0m
+[0;32mI (24322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (39322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (54322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (69322) Game32: 🔋 Battery: 3.92V (77%)[0m
+[0;32mI (84322) Game32: 🔋 Battery: 3.92V (77%)[0m
+����������������������������������������������������������������(99322) Game32: 🔋 Battery: 3.93V (77%)
+[0;32mI (114322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (129322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (144322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (151422) Game32: Button pressed: UP (262 Hz)[0m
+[0;32mI (152122) Game32: Button pressed: START (494 Hz)[0m
+[0;32mI (153122) Game32: Button pressed: DOWN (294 Hz)[0m
+[0;32mI (154072) Game32: Button pressed: LEFT (330 Hz)[0m
+[0;32mI (154872) Game32: Button pressed: RIGHT (349 Hz)[0m
+[0;32mI (155572) Game32: Button pressed: A (392 Hz)[0m
+[0;32mI (156422) Game32: Button pressed: B (440 Hz)[0m
+[0;32mI (157322) Game32: Button pressed: SELECT (523 Hz)[0m
+[0;32mI (159322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (174322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (189322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (204322) Game32: 🔋 Battery: 3.93V (78%)[0m
+[0;32mI (219322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (234322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (249322) Game32: 🔋 Battery: 3.93V (77%)[0m
+����������������������������������������������������������������(264322) Game32: 🔋 Battery: 3.93V (77%)
+[0;32mI (279322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (294322) Game32: 🔋 Battery: 3.93V (77%)[0m
+����������������������������������������������������������������322) Game32: 🔋 Battery: 3.93V (77%)
+����������������������������������������������������������������(324322) Game32: 🔋 Battery: 3.93V (77%)
+����������������������������������������������������������������(339322) Game32: 🔋 Battery: 3.93V (77%)
+[0;32mI (354322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (369322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (384322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (399322) Game32: 🔋 Battery: 3.92V (77%)[0m
+[0;32mI (414322) Game32: 🔋 Battery: 3.93V (77%)[0m
+[0;32mI (429322) Game32: 🔋 Battery: 3.92V (77%)[0m

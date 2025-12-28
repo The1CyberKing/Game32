@@ -1,0 +1,2 @@
+source D:/PlatformIO_Projects/Game32_Hardware_Test/build/bootloader/gdbinit/symbols
+source D:/PlatformIO_Projects/Game32_Hardware_Test/build/bootloader/gdbinit/connect

@@ -1,0 +1,77 @@
+Command: C:\Users\Bharg\.espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe E:\Applications\ESP32\esp-idf\tools/idf_monitor.py -p COM5 -b 115200 --toolchain-prefix xtensa-esp32-elf- --target esp32 --revision 0 D:\PlatformIO_Projects\Game32_Hardware_Test\build\Game32_Hardware_Test.elf D:\PlatformIO_Projects\Game32_Hardware_Test\build\bootloader\bootloader.elf --force-color -m 'C:\Users\Bharg\.espressif\python_env\idf5.5_py3.11_env\Scripts\python.exe' 'E:\Applications\ESP32\esp-idf\tools\idf.py'
+[0;32mI (13) boot: ESP-IDF v5.5.1 2nd stage bootloader[0m
+[0;32mI (13) boot: compile time Dec 25 2025 19:56:52[0m
+[0;32mI (13) boot: Multicore bootloader[0m
+[0;32mI (14) boot: chip revision: v3.1[0m
+[0;32mI (16) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (20) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (24) boot.esp32: SPI Flash Size : 2MB[0m
+[0;32mI (27) boot: Enabling RNG early entropy source...[0m
+[0;32mI (32) boot: Partition Table:[0m
+[0;32mI (34) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (41) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (47) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (54) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (60) boot: End of partition table[0m
+[0;32mI (64) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=0ec6ch ( 60524) map[0m
+[0;32mI (92) esp_image: segment 1: paddr=0001ec94 vaddr=3ffb0000 size=01384h (  4996) load[0m
+[0;32mI (94) esp_image: segment 2: paddr=00020020 vaddr=400d0020 size=26fa4h (159652) map[0m
+[0;32mI (150) esp_image: segment 3: paddr=00046fcc vaddr=3ffb1384 size=0126ch (  4716) load[0m
+[0;32mI (152) esp_image: segment 4: paddr=00048240 vaddr=40080000 size=0f428h ( 62504) load[0m
+[0;32mI (178) esp_image: segment 5: paddr=00057670 vaddr=50000000 size=00020h (    32) load[0m
+[0;32mI (186) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (186) boot: Disabling RNG early entropy source...[0m
+[0;32mI (199) cpu_start: Multicore app[0m
+[0;32mI (207) cpu_start: Pro cpu start user code[0m
+[0;32mI (207) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (207) app_init: Application information:[0m
+[0;32mI (207) app_init: Project name:     Game32_Hardware_Test[0m
+[0;32mI (212) app_init: App version:      1[0m
+[0;32mI (215) app_init: Compile time:     Dec 25 2025 19:55:54[0m
+[0;32mI (220) app_init: ELF file SHA256:  b8feb17ba...[0m
+[0;32mI (225) app_init: ESP-IDF:          v5.5.1[0m
+[0;32mI (229) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (232) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (236) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (241) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (247) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (252) heap_init: At 3FFB2F80 len 0002D080 (180 KiB): DRAM[0m
+[0;32mI (257) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (262) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (268) heap_init: At 4008F428 len 00010BD8 (66 KiB): IRAM[0m
+[0;33mW (274) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig[0m
+[0;32mI (286) spi_flash: detected chip: generic[0m
+[0;32mI (290) spi_flash: flash io: dio[0m
+[0;33mW (293) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (305) main_task: Started on CPU0[0m
+[0;32mI (315) main_task: Calling app_main()[0m
+[0;32mI (315) Game32: Starting Game32 hardware test...[0m
+[0;32mI (315) Game32: ADC initialized[0m
+[1;31mE (335) vfs_fat_sdmmc: sdmmc_card_init failed (0x107).[0m
+[1;31mE (335) Game32: Failed to mount SD card: ESP_ERR_TIMEOUT[0m
+[0;32mI (335) Game32: SD card not detected or failed to mount[0m
+[0;32mI (335) Game32: ADC reading: 2203 (1.78V)[0m
+[0;32mI (1335) Game32: ADC reading: 2194 (1.77V)[0m
+[0;32mI (2335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (3335) Game32: ADC reading: 2195 (1.77V)[0m
+[0;32mI (4335) Game32: ADC reading: 2197 (1.77V)[0m
+[0;32mI (5335) Game32: ADC reading: 2193 (1.77V)[0m
+[0;32mI (6335) Game32: ADC reading: 2195 (1.77V)[0m
+[0;32mI (7335) Game32: ADC reading: 2195 (1.77V)[0m
+[0;32mI (8335) Game32: ADC reading: 2193 (1.77V)[0m
+[0;32mI (9335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (10335) Game32: ADC reading: 2085 (1.68V)[0m
+[0;32mI (11335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (12335) Game32: ADC reading: 2127 (1.71V)[0m
+[0;32mI (13335) Game32: ADC reading: 2126 (1.71V)[0m
+[0;32mI (14335) Game32: ADC reading: 2128 (1.71V)[0m
+[0;32mI (15335) Game32: ADC reading: 2126 (1.71V)[0m
+[0;32mI (16335) Game32: ADC reading: 2128 (1.71V)[0m
+[0;32mI (17335) Game32: ADC reading: 2127 (1.71V)[0m
+[0;32mI (18335) Game32: ADC reading: 2122 (1.71V)[0m
+[0;32mI (19335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (20335) Game32: ADC reading: 2188 (1.76V)[0m
+[0;32mI (21335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (22335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (23335) Game32: ADC reading: 2192 (1.77V)[0m
+[0;32mI (24335) Game32: ADC reading: 2192 (1.77V)[0m
