@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Game32_Power")(type "KiCad")(uri "${KIPRJMOD}/Game32_Power.kicad_sym")(options "")(descr ""))
+)
