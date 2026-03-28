@@ -1,0 +1,12 @@
+# KiCad temporary files and locks
+*.bak
+*.bck
+*.lck
+_autosave-*
+_autosave/*
+*-backups/
+
+# KiCad GUI settings (user preference files, not project data)
+*.kicad_prl
+*.kicad_wks
+fp-info-cache

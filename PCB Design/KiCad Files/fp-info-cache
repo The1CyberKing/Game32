@@ -1,4 +1,4 @@
-26774399468196183
+26777969262376835
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -59380,6 +59380,13 @@ ceramic
 0
 3
 3
+Custom Devkits
+ELEGOO ESP32 DevKit Type C V1
+
+
+0
+30
+30
 Custom_Power
 5V_Boost_Converter
 
@@ -94414,7 +94421,7 @@ ESP32-C3-DevKit-ELEGOO
 esp32 esp32-c3 riscv risc-v wifi bluetooth ble
 0
 30
-30
+28
 RF_Module
 ESP32-C3-DevKitM-1
 2.4 GHz Wi-Fi and Bluetooth module https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/index.html
@@ -94751,6 +94758,13 @@ Taiyo Yuden NRF51822 Module Bluetooth
 0
 30
 28
+RF_Module
+Untitled
+
+
+0
+0
+0
 RF_Module
 WEMOS_C3_mini
 16-pin module, column spacing 22.86 mm (900 mils), https://www.wemos.cc/en/latest/_static/files/dim_c3_mini_v1.0.0.pdf
