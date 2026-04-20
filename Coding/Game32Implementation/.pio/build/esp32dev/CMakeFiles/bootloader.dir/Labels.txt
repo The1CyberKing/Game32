@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/CMakeFiles/bootloader
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/CMakeFiles/bootloader.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/CMakeFiles/bootloader-complete.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/Users/bhargmac/GithubRepositories/Game32/Coding/Game32Implementation/.pio/build/esp32dev/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
