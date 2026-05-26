@@ -6,7 +6,10 @@
 #include "types.h"
 #include <esp_log.h>
 #include <esp_timer.h>
+#include <esp_sleep.h>
+#include <driver/gpio.h>
 #include <stdio.h>
+#include "BoardConfig.h"
 
 static const char* TAG = "MenuState";
 
@@ -21,6 +24,7 @@ void MenuState::loadRoot() {
     m_gamesList.clear();
     m_gamesList.push_back("apps");
     m_gamesList.push_back("games");
+    m_gamesList.push_back("Sleep");
     m_cursorIndex = m_rootCursorIndex;
     m_topVisibleIndex = m_rootTopVisibleIndex;
 }
@@ -86,10 +90,21 @@ void MenuState::onUpdate() {
     // 4 is BTN_A
     if (InputManager::getInstance().justPressed(4)) { 
         if (m_inRoot && m_gamesList.size() > 0) {
-            if (m_cursorIndex == 0) {
+            std::string selection = m_gamesList[m_cursorIndex];
+            if (selection == "apps") {
                 loadDirectory("/sd/apps");
-            } else if (m_cursorIndex == 1) {
+            } else if (selection == "games") {
                 loadDirectory("/sd/games/arduboy");
+            } else if (selection == "Sleep") {
+                ESP_LOGI(TAG, "Initiating sleep sequence...");
+                DisplayManager::getInstance().sleepDisplay();
+                
+                gpio_wakeup_enable((gpio_num_t)BTN_START_GPIO, GPIO_INTR_LOW_LEVEL);
+                esp_sleep_enable_gpio_wakeup();
+                
+                esp_light_sleep_start();
+                
+                DisplayManager::getInstance().wakeDisplay();
             }
         } else {
             // Future: Execute selected file

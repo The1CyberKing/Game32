@@ -232,3 +232,11 @@ esp_err_t DisplayManager::renderPipelinePush() {
     }
     return ESP_OK;
 }
+
+void DisplayManager::sleepDisplay() {
+    sendCommand(0xAE); // Display Off
+}
+
+void DisplayManager::wakeDisplay() {
+    sendCommand(0xAF); // Display On
+}
