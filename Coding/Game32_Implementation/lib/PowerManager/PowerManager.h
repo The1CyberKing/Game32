@@ -2,7 +2,7 @@
 #define POWER_MANAGER_H
 
 #include "config.h"
-#include "pins.h"
+#include "BoardConfig.h"
 
 class PowerManager {
 public:

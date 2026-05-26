@@ -1,5 +1,8 @@
 #include "StartupState.h"
 #include "DisplayManager.h"
+#include "SDManager.h"
+#include "StateManager.h"
+#include "MenuState.h"
 #include "types.h"
 #include <stdio.h>
 #include <esp_log.h>
@@ -15,11 +18,17 @@ void StartupState::onEnter() {
     ESP_LOGI(TAG, "Entering Startup Sequence...");
     m_frameCount = 0;
     sysContext.current_state.store(SystemState::Startup);
+    
+    if (!SDManager::getInstance().initialize()) {
+        ESP_LOGE(TAG, "Failed to initialize SD Card");
+    }
 }
 
 void StartupState::onUpdate() {
     m_frameCount++;
-    // Future: if (m_frameCount > 90) StateManager::getInstance().changeState(&MenuState::getInstance());
+    if (m_frameCount > 90) {
+        StateManager::getInstance().changeState(&MenuState::getInstance());
+    }
 }
 
 void StartupState::onDraw() {

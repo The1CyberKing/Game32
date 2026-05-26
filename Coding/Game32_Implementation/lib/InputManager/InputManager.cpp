@@ -1,8 +1,9 @@
 #include "InputManager.h"
+#include <driver/gpio.h>
 
 static const gpio_num_t button_pins[] = {
-    BTN_UP, BTN_DOWN, BTN_LEFT, BTN_RIGHT, 
-    BTN_A, BTN_B, BTN_START, BTN_SELECT
+    (gpio_num_t)BTN_UP_GPIO, (gpio_num_t)BTN_DOWN_GPIO, (gpio_num_t)BTN_LEFT_GPIO, (gpio_num_t)BTN_RIGHT_GPIO, 
+    (gpio_num_t)BTN_A_GPIO, (gpio_num_t)BTN_B_GPIO, (gpio_num_t)BTN_START_GPIO, (gpio_num_t)BTN_SELECT_GPIO
 };
 #define NUM_BUTTONS (sizeof(button_pins) / sizeof(button_pins[0]))
 

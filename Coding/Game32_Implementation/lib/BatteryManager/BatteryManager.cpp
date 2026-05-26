@@ -11,7 +11,7 @@ BatteryManager& BatteryManager::getInstance() {
 
 void BatteryManager::initialize() {
     adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_12);
 }
 
 void BatteryManager::updateService() {
@@ -40,4 +40,8 @@ void BatteryManager::updateService() {
 
     uint16_t percentage_tenths = static_cast<uint16_t>(percentage * 10.0f);
     sysContext.battery_percentage_tenths.store(percentage_tenths);
+}
+
+uint16_t BatteryManager::getBatteryPercentage() {
+    return sysContext.battery_percentage_tenths.load() / 10;
 }

@@ -2,6 +2,7 @@
 #include "types.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <driver/gpio.h>
 
 PowerManager& PowerManager::getInstance() {
     static PowerManager instance;
@@ -9,16 +10,16 @@ PowerManager& PowerManager::getInstance() {
 }
 
 void PowerManager::initialize() {
-    gpio_reset_pin(LED_GPIO);
-    gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
-    gpio_set_level(LED_GPIO, 0);
+    gpio_reset_pin((gpio_num_t)LED_GPIO);
+    gpio_set_direction((gpio_num_t)LED_GPIO, GPIO_MODE_OUTPUT);
+    gpio_set_level((gpio_num_t)LED_GPIO, 0);
 }
 
 void PowerManager::executeAdaptiveKeepalive() {
     uint32_t pixel_density = sysContext.active_pixel_count.load();
 
     if (pixel_density >= PIXEL_SAFE_THRESHOLD) {
-        gpio_set_level(LED_GPIO, 0); 
+        gpio_set_level((gpio_num_t)LED_GPIO, 0); 
         return;
     }
 
@@ -31,7 +32,7 @@ void PowerManager::executeAdaptiveKeepalive() {
     uint32_t target_loops = static_cast<uint32_t>(intensity * 40000);
 
     if (target_loops > 0) {
-        gpio_set_level(LED_GPIO, 1); 
+        gpio_set_level((gpio_num_t)LED_GPIO, 1); 
         
         volatile uint32_t furnace = 0xACE1U; 
         for (uint32_t i = 0; i < target_loops; ++i) {

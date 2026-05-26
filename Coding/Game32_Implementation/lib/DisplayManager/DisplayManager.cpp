@@ -49,18 +49,23 @@ DisplayManager& DisplayManager::getInstance() {
     return instance;
 }
 
+esp_err_t DisplayManager::sendCommandLocked(uint8_t command) {
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (SSD1306_I2C_ADDR << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_write_byte(cmd, 0x00, true);  
+    i2c_master_write_byte(cmd, command, true);
+    i2c_master_stop(cmd);
+    
+    esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(10));
+    i2c_cmd_link_delete(cmd);
+    
+    return ret;
+}
+
 esp_err_t DisplayManager::sendCommand(uint8_t command) {
     if (xSemaphoreTake(g_i2cMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-        i2c_master_start(cmd);
-        i2c_master_write_byte(cmd, (SSD1306_I2C_ADDR << 1) | I2C_MASTER_WRITE, true);
-        i2c_master_write_byte(cmd, 0x00, true);  
-        i2c_master_write_byte(cmd, command, true);
-        i2c_master_stop(cmd);
-        
-        esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(10));
-        i2c_cmd_link_delete(cmd);
-        
+        esp_err_t ret = sendCommandLocked(command);
         xSemaphoreGive(g_i2cMutex);
         return ret;
     }
@@ -99,14 +104,12 @@ esp_err_t DisplayManager::initialize() {
     
     isInitialized = true;
     return sendCommand(0xAF);
-    
-    return sendCommand(0xAF); 
 }
 
 void DisplayManager::clearBuffer() {
     memset(m_frameBuffer, 0, sizeof(m_frameBuffer));
     memset(m_dirtyPages, true, sizeof(m_dirtyPages)); 
-    m_cachedPixelCount = 0; 
+    m_cachedPixelCount.store(0); 
 }
 
 void DisplayManager::drawPixel(int16_t x, int16_t y, uint8_t color) {
@@ -132,7 +135,7 @@ void DisplayManager::drawPixel(int16_t x, int16_t y, uint8_t color) {
     }
 }
 
-void DisplayManager::drawChar(int16_t x, int16_t y, char c) {
+void DisplayManager::drawChar(int16_t x, int16_t y, char c, uint8_t color, uint8_t bg_color) {
     uint8_t lookup_idx = 0;
     
     if (c >= 'a' && c <= 'z') c -= 32; 
@@ -150,22 +153,52 @@ void DisplayManager::drawChar(int16_t x, int16_t y, char c) {
     for (int i = 0; i < 5; i++) {
         uint8_t line = font5x7[lookup_idx][i];
         for (int j = 0; j < 7; j++) {
-            if (line & (1 << j)) drawPixel(x + i, y + j, 1);
+            if (line & (1 << j)) {
+                drawPixel(x + i, y + j, color);
+            } else if (bg_color != 2) {
+                drawPixel(x + i, y + j, bg_color);
+            }
         }
     }
 }
 
-void DisplayManager::drawString(int16_t x, int16_t y, const char* str) {
+void DisplayManager::drawString(int16_t x, int16_t y, const char* str, uint8_t color, uint8_t bg_color) {
     while (*str) {
         if (x > 122) break; 
-        drawChar(x, y, *str);
+        drawChar(x, y, *str, color, bg_color);
         x += 6; 
         str++;
     }
 }
 
+void DisplayManager::drawText(int16_t x, int16_t y, const char* str, uint8_t color, uint8_t bg_color) {
+    drawString(x, y, str, color, bg_color);
+}
+
+void DisplayManager::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color) {
+    for (int16_t i = x; i < x + w; i++) {
+        for (int16_t j = y; j < y + h; j++) {
+            drawPixel(i, j, color);
+        }
+    }
+}
+
+void DisplayManager::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color) {
+    int16_t dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+    int16_t dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+    int16_t err = dx + dy, e2;
+
+    while (true) {
+        drawPixel(x0, y0, color);
+        if (x0 == x1 && y0 == y1) break;
+        e2 = 2 * err;
+        if (e2 >= dy) { err += dy; x0 += sx; }
+        if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+}
+
 esp_err_t DisplayManager::renderPipelinePush() {
-    sysContext.active_pixel_count.store(m_cachedPixelCount);
+    sysContext.active_pixel_count.store(m_cachedPixelCount.load());
 
     for (int page = 0; page < 8; page++) {
         if (!m_dirtyPages[page]) continue; 

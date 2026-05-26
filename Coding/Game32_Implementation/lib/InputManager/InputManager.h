@@ -1,7 +1,7 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
 
-#include "pins.h"
+#include "BoardConfig.h"
 #include <stdint.h>
 
 class InputManager {

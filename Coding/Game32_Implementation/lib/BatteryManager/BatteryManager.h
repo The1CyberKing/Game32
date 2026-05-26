@@ -2,7 +2,7 @@
 #define BATTERY_MANAGER_H
 
 #include "config.h"
-#include "pins.h"
+#include "BoardConfig.h"
 
 class BatteryManager {
 public:
@@ -12,6 +12,7 @@ public:
 
     void initialize();
     void updateService();
+    uint16_t getBatteryPercentage();
 
 private:
     BatteryManager() = default; 
