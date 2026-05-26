@@ -16,14 +16,14 @@
 #define BAT_ADC_GPIO 34 // ADC1_CHANNEL_6
 
 // --- Input Buttons ---
-#define BTN_UP_GPIO     32
-#define BTN_DOWN_GPIO   33
-#define BTN_LEFT_GPIO   25
-#define BTN_RIGHT_GPIO  26
-#define BTN_A_GPIO      27
-#define BTN_B_GPIO      14
-#define BTN_START_GPIO  17
-#define BTN_SELECT_GPIO 13
+#define BTN_UP_GPIO     13 //13
+#define BTN_DOWN_GPIO   14 //14
+#define BTN_LEFT_GPIO   27 //27
+#define BTN_RIGHT_GPIO  26 //26
+#define BTN_A_GPIO      33 //33
+#define BTN_B_GPIO      32 //32
+#define BTN_START_GPIO  17 //17
+#define BTN_SELECT_GPIO 25 //25
 
 // --- Audio ---
 #define BUZZER_GPIO 15

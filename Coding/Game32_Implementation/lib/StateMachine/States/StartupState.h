@@ -16,6 +16,7 @@ public:
 private:
     StartupState() = default;
     uint32_t m_frameCount = 0;
+    bool m_hasTransitioned = false;
 };
 
 #endif // STARTUP_STATE_H

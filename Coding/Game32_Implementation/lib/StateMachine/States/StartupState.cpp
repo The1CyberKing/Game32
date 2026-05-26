@@ -17,6 +17,7 @@ StartupState& StartupState::getInstance() {
 void StartupState::onEnter() {
     ESP_LOGI(TAG, "Entering Startup Sequence...");
     m_frameCount = 0;
+    m_hasTransitioned = false;
     sysContext.current_state.store(SystemState::Startup);
     
     if (!SDManager::getInstance().initialize()) {
@@ -25,8 +26,11 @@ void StartupState::onEnter() {
 }
 
 void StartupState::onUpdate() {
+    if (m_hasTransitioned) return;
+    
     m_frameCount++;
     if (m_frameCount > 90) {
+        m_hasTransitioned = true;
         StateManager::getInstance().changeState(&MenuState::getInstance());
     }
 }

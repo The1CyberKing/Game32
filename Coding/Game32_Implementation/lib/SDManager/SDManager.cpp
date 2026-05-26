@@ -131,7 +131,14 @@ std::vector<std::string> SDManager::getFilesInDirectory(std::string path) {
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL) {
         if (entry->d_type == DT_REG) { // Regular file
-            files.push_back(entry->d_name);
+            std::string filename = entry->d_name;
+            if (filename.length() > 0 && (filename[0] == '.' || filename[0] == '_')) {
+                continue;
+            }
+            if (filename.find('~') != std::string::npos) {
+                continue;
+            }
+            files.push_back(filename);
         }
     }
     closedir(dir);
