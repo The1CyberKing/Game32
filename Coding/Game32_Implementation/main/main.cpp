@@ -46,13 +46,14 @@ void core1_graphics_engine_task(void *pvParameters) {
     while (1) {
         InputManager::getInstance().update(); // Poll & Debounce
         StateManager::getInstance().update();
-        
-        DisplayManager::getInstance().clearBuffer();
         StateManager::getInstance().draw();
         DisplayManager::getInstance().renderPipelinePush();
 
         // Pauses the task strictly for the exact remainder of the 33ms window
-        vTaskDelayUntil(&lastWakeTime, frameDelay); 
+        vTaskDelayUntil(&lastWakeTime, frameDelay);
+        // Fallback: If we missed the deadline, vTaskDelayUntil returns immediately.
+        // We MUST force a yield here so the Idle task can feed the watchdog on Core 1.
+        vTaskDelay(1); 
     }
 }
 

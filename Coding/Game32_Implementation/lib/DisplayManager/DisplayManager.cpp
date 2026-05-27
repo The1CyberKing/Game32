@@ -108,8 +108,18 @@ esp_err_t DisplayManager::initialize() {
 
 void DisplayManager::clearBuffer() {
     memset(m_frameBuffer, 0, sizeof(m_frameBuffer));
-    memset(m_dirtyPages, true, sizeof(m_dirtyPages)); 
-    m_cachedPixelCount.store(0); 
+    for (int i = 0; i < 8; i++) {
+        m_dirtyPages[i] = true;
+    }
+}
+
+void DisplayManager::drawArduboyFrame(const uint8_t* buffer) {
+    memcpy(m_frameBuffer, buffer, 1024);
+
+    for (int i = 0; i < 8; i++) {
+        m_dirtyPages[i] = true;
+    }
+    renderPipelinePush();
 }
 
 void DisplayManager::drawPixel(int16_t x, int16_t y, uint8_t color) {

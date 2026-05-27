@@ -23,6 +23,7 @@ public:
     void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color);
     
     esp_err_t renderPipelinePush();
+    void drawArduboyFrame(const uint8_t* buffer);
     void sleepDisplay();
     void wakeDisplay();
 

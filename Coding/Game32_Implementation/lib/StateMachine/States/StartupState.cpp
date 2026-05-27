@@ -36,6 +36,7 @@ void StartupState::onUpdate() {
 }
 
 void StartupState::onDraw() {
+    DisplayManager::getInstance().clearBuffer();
     uint16_t raw_tenths = sysContext.battery_percentage_tenths.load();
     uint16_t whole_percentage = raw_tenths / 10;
     uint16_t decimal_fraction = raw_tenths % 10;

@@ -10,6 +10,8 @@
 #include <driver/gpio.h>
 #include <stdio.h>
 #include "BoardConfig.h"
+#include "EmulatorState.h"
+#include "StateManager.h"
 
 static const char* TAG = "MenuState";
 
@@ -106,8 +108,11 @@ void MenuState::onUpdate() {
                 
                 DisplayManager::getInstance().wakeDisplay();
             }
-        } else {
-            // Future: Execute selected file
+        } else if (!m_inRoot && m_gamesList.size() > 0) {
+            std::string selection = m_gamesList[m_cursorIndex];
+            std::string absolutePath = m_currentPath + "/" + selection;
+            EmulatorState::getInstance().setTargetRom(absolutePath);
+            StateManager::getInstance().changeState(&EmulatorState::getInstance());
         }
     }
 
@@ -127,6 +132,7 @@ void MenuState::onUpdate() {
 }
 
 void MenuState::onDraw() {
+    DisplayManager::getInstance().clearBuffer();
     if (m_inDetailView) {
         DisplayManager::getInstance().drawText(0, 0, "FILE DETAILS:");
         DisplayManager::getInstance().drawLine(0, 7, 127, 7, 1);
