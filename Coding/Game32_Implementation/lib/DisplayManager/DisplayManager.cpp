@@ -79,8 +79,8 @@ esp_err_t DisplayManager::initialize() {
     // C++ Compliant Initialization
     i2c_config_t conf = {};
     conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = TFT_SDA_GPIO;
-    conf.scl_io_num = TFT_SCL_GPIO;
+    conf.sda_io_num = (gpio_num_t)TFT_SDA_GPIO;
+    conf.scl_io_num = (gpio_num_t)TFT_SCL_GPIO;
     conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
     conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
     conf.master.clk_speed = I2C_FREQ_HZ; 

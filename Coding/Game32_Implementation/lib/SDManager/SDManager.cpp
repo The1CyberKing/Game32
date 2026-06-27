@@ -20,11 +20,10 @@ bool SDManager::mountFileSystem() {
     esp_err_t ret;
     
     // Configuration for the FAT partition
-    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
-        .format_if_mount_failed = false, // CRITICAL: Never auto-format a user's card!
-        .max_files = 5,
-        .allocation_unit_size = 16 * 1024
-    };
+    esp_vfs_fat_sdmmc_mount_config_t mount_config = {};
+    mount_config.format_if_mount_failed = false;
+    mount_config.max_files = 5;
+    mount_config.allocation_unit_size = 16 * 1024;
 
     ESP_LOGI(TAG, "Initializing SD card via SPI");
     
