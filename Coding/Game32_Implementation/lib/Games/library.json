@@ -1,0 +1,22 @@
+{
+  "name": "Games",
+  "version": "1.0.0",
+  "dependencies": {
+    "NativeEngine": "*",
+    "DisplayManager": "*",
+    "InputManager": "*",
+    "AudioEngine": "*",
+    "SDManager": "*"
+  },
+  "build": {
+    "srcFilter": ["+<*>", "+<*/*>", "+<*/*/*>"],
+    "flags": [
+      "-Ilib/DisplayManager",
+      "-Ilib/InputManager",
+      "-Ilib/AudioEngine",
+      "-Ilib/SDManager",
+      "-Ilib/NativeEngine",
+      "-Iinclude"
+    ]
+  }
+}
