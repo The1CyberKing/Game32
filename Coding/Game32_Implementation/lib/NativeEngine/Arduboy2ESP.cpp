@@ -1,9 +1,23 @@
 #include "Arduboy2ESP.h"
-#include "../StateMachine/States/GameEngineState.h"
+#include "../StateMachine/States/OverlayState.h"
+#include "EEPROM.h"
+#include "PowerManager.h"
 #include "esp_log.h"
 #include <algorithm>
 
+#ifndef GAME_NAME
+#define GAME_NAME "default"
+#endif
+
 [[maybe_unused]] static const char* TAG = "Arduboy2ESP";
+
+static char s_currentGameName[64] = GAME_NAME;
+void Arduboy2ESP::setGameName(const char* name) {
+    if (name) strncpy(s_currentGameName, name, sizeof(s_currentGameName) - 1);
+}
+const char* Arduboy2ESP::getGameName() {
+    return s_currentGameName;
+}
 
 // --- Simple 5x7 ASCII Font Table (characters 32 to 127) ---
 static const uint8_t PROGMEM font5x7[][5] = {
@@ -253,6 +267,9 @@ void Arduboy2ESP::begin() {
     clear();
     currentButtonState = 0;
     previousButtonState = 0;
+    
+    // Auto-Load the Save File
+    EEPROM.loadFromFile(getGameName());
 }
 
 void Arduboy2ESP::beginNoLogo() {
@@ -266,6 +283,13 @@ void Arduboy2ESP::clear() {
 void Arduboy2ESP::display() {
     syncAudioTimers();
     DisplayManager::getInstance().drawArduboyFrame(sBuffer);
+    
+    if (OverlayState::getInstance().isActive()) {
+        OverlayState::getInstance().onDraw();
+    }
+    
+    // ALWAYS composite and push at the very end
+    DisplayManager::getInstance().renderPipelinePush();
     AudioEngine::getInstance().update();
 }
 
@@ -280,6 +304,14 @@ void Arduboy2ESP::setFrameRate(uint8_t rate) {
 }
 
 bool Arduboy2ESP::nextFrame() {
+    PowerManager::getInstance().executeAdaptiveKeepalive();
+    
+    if (OverlayState::getInstance().isActive()) {
+        OverlayState::getInstance().onUpdate();
+        display(); // Force display update while game logic is stalled
+        return false;
+    }
+
     uint32_t now = (uint32_t)(esp_timer_get_time() / 1000);
     if (now - m_lastFrameTimeMs < m_frameDurationMs) {
         return false;
@@ -308,7 +340,7 @@ void Arduboy2ESP::pollButtons() {
     auto& im = InputManager::getInstance();
     if (im.isHeld(6) && im.isHeld(7)) {
         clearButtonState();
-        GameEngineState::getInstance().pauseToOverlay();
+        OverlayState::getInstance().onEnter();
         return;
     }
 

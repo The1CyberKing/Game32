@@ -166,6 +166,9 @@ public:
     void setRGBled(uint8_t red, uint8_t green, uint8_t blue) {}
     void setRGBled(uint8_t red, uint8_t green, uint8_t blue, uint8_t pwm) {}
 
+    static void setGameName(const char* name);
+    static const char* getGameName();
+
     // Display & Frame Pacing
     void clear();
     void display();

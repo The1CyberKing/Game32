@@ -1,8 +1,10 @@
 #include "OverlayState.h"
-#include "GameEngineState.h"
-#include "MenuState.h"
-#include "../StateManager.h"
+#include "esp_ota_ops.h"
+#include "esp_partition.h"
+#include "esp_system.h"
 #include "InputManager.h"
+#include "../../NativeEngine/EEPROM.h"
+#include "../../NativeEngine/Arduboy2ESP.h"
 #include "DisplayManager.h"
 #include "AudioEngine.h"
 #include "SDManager.h"
@@ -20,7 +22,9 @@ OverlayState& OverlayState::getInstance() {
 
 void OverlayState::onEnter() {
     ESP_LOGI(TAG, "Entering System Overlay");
+    m_active = true;
     m_beepEndTimeMs = 0;
+    EEPROM.commitToFile(Arduboy2ESP::getGameName());
     m_cursorIndex = 0; // Start at Resume
     
     // Short enter beep
@@ -61,9 +65,9 @@ void OverlayState::onUpdate() {
             AudioEngine::getInstance().playTone(400 + (vol * 30), 0);
             m_beepEndTimeMs = nowMs + 40;
         } else if (m_cursorIndex == 4) { // Brightness
-            DisplayManager::getInstance().brightnessDown();
-            uint8_t brg = DisplayManager::getInstance().getBrightness();
-            AudioEngine::getInstance().playTone(400 + (brg * 12), 0);
+            // DisplayManager::getInstance().brightnessDown();
+            // uint8_t brg = DisplayManager::getInstance().getBrightness();
+            // AudioEngine::getInstance().playTone(400 + (brg * 12), 0);
             m_beepEndTimeMs = nowMs + 40;
         }
         return;
@@ -77,9 +81,9 @@ void OverlayState::onUpdate() {
             AudioEngine::getInstance().playTone(400 + (vol * 30), 0);
             m_beepEndTimeMs = nowMs + 40;
         } else if (m_cursorIndex == 4) { // Brightness
-            DisplayManager::getInstance().brightnessUp();
-            uint8_t brg = DisplayManager::getInstance().getBrightness();
-            AudioEngine::getInstance().playTone(400 + (brg * 12), 0);
+            // DisplayManager::getInstance().brightnessUp();
+            // uint8_t brg = DisplayManager::getInstance().getBrightness();
+            // AudioEngine::getInstance().playTone(400 + (brg * 12), 0);
             m_beepEndTimeMs = nowMs + 40;
         }
         return;
@@ -89,7 +93,7 @@ void OverlayState::onUpdate() {
     if (im.justPressed(6)) {
         ESP_LOGI(TAG, "START pressed. Resuming game.");
         AudioEngine::getInstance().stopTone();
-        StateManager::getInstance().changeState(&GameEngineState::getInstance());
+        resume();
         return;
     }
 
@@ -99,22 +103,25 @@ void OverlayState::onUpdate() {
             case 0: // Resume
                 ESP_LOGI(TAG, "Resume selected. Returning to game.");
                 AudioEngine::getInstance().stopTone();
-                StateManager::getInstance().changeState(&GameEngineState::getInstance());
+                resume();
                 break;
             case 1: // Save State
                 ESP_LOGI(TAG, "Save State selected.");
                 AudioEngine::getInstance().playTone(1200, 0);
                 m_beepEndTimeMs = nowMs + 150;
+                /*
                 if (GameEngineState::getInstance().getTargetGame()) {
                     IGame* g = GameEngineState::getInstance().getTargetGame();
                     int slot = SDManager::getInstance().getPrioritySlot(g->getName());
                     g->saveState(slot);
                 }
+                */
                 break;
             case 2: // Load State
                 ESP_LOGI(TAG, "Load State selected.");
                 AudioEngine::getInstance().playTone(1200, 0);
                 m_beepEndTimeMs = nowMs + 150;
+                /*
                 if (GameEngineState::getInstance().getTargetGame()) {
                     IGame* g = GameEngineState::getInstance().getTargetGame();
                     int slot = SDManager::getInstance().getPrioritySlot(g->getName());
@@ -122,15 +129,24 @@ void OverlayState::onUpdate() {
                         StateManager::getInstance().changeState(&GameEngineState::getInstance());
                     }
                 }
+                */
                 break;
             case 3: // Volume (LEFT/RIGHT ONLY)
             case 4: // Brightness (LEFT/RIGHT ONLY)
                 break;
             case 5: // Quit to Menu
-                ESP_LOGI(TAG, "Quit to Menu selected.");
+                ESP_LOGI(TAG, "Quit to Menu selected. Rebooting to ota_0...");
                 AudioEngine::getInstance().stopTone();
-                GameEngineState::getInstance().quitGame();
-                StateManager::getInstance().changeState(&MenuState::getInstance());
+                EEPROM.commitToFile(Arduboy2ESP::getGameName());
+                {
+                    const esp_partition_t* launcher_part = esp_partition_find_first(ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_OTA_0, NULL);
+                    if (launcher_part) {
+                        esp_ota_set_boot_partition(launcher_part);
+                        esp_restart();
+                    } else {
+                        ESP_LOGE(TAG, "FATAL: ota_0 partition not found!");
+                    }
+                }
                 break;
         }
         return;
@@ -189,8 +205,8 @@ void OverlayState::onDraw() {
             uint8_t vol = AudioEngine::getInstance().getVolume();
             snprintf(itemStr, sizeof(itemStr), "Vol:%3d%%", vol * 5);
         } else if (i == 4) {
-            uint8_t brg = DisplayManager::getInstance().getBrightness();
-            snprintf(itemStr, sizeof(itemStr), "Brg:%3d%%", brg * 2);
+            // uint8_t brg = DisplayManager::getInstance().getBrightness();
+            snprintf(itemStr, sizeof(itemStr), "Brg: N/A");
         } else if (i == 5) {
             snprintf(itemStr, sizeof(itemStr), "Quit to Menu");
         }
@@ -212,8 +228,9 @@ void OverlayState::onDraw() {
                 uint8_t vol = AudioEngine::getInstance().getVolume();
                 fill_w = ((int)vol * 54) / 20;
             } else {
-                uint8_t brg = DisplayManager::getInstance().getBrightness();
-                fill_w = ((int)brg * 54) / 50;
+                // uint8_t brg = DisplayManager::getInstance().getBrightness();
+                // fill_w = ((int)brg * 54) / 50;
+                fill_w = 0;
             }
             if (fill_w > 0) {
                 DisplayManager::getInstance().fillRect(bar_x0 + 1, y + 2, fill_w, 3, draw_color);

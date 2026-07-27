@@ -119,7 +119,7 @@ void DisplayManager::drawArduboyFrame(const uint8_t* buffer) {
     for (int i = 0; i < 8; i++) {
         m_dirtyPages[i] = true;
     }
-    renderPipelinePush();
+    // Compositing only; push will be handled by the engine
 }
 
 void DisplayManager::drawPixel(int16_t x, int16_t y, uint8_t color) {

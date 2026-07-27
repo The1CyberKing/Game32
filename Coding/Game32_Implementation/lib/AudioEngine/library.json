@@ -1,0 +1,9 @@
+{
+  "name": "AudioEngine",
+  "version": "1.0.0",
+  "build": {
+    "flags": [
+      "-Iinclude"
+    ]
+  }
+}

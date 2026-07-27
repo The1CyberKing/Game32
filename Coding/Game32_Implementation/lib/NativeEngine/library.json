@@ -4,15 +4,17 @@
   "dependencies": {
     "DisplayManager": "*",
     "InputManager": "*",
-    "AudioEngine": "*"
+    "AudioEngine": "*",
+    "PowerManager": "*"
   },
   "build": {
     "flags": [
+      "-Iinclude",
       "-Ilib/DisplayManager",
       "-Ilib/InputManager",
       "-Ilib/AudioEngine",
-      "-Iinclude",
-      "-Ilib/Games"
+      "-Ilib/PowerManager",
+      "-Ilib/StateMachine/States"
     ]
   }
 }
