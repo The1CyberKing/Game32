@@ -119,48 +119,13 @@ static const uint8_t PROGMEM font5x7[][5] = {
 };
 
 // --- Arduboy2Audio ---
+bool Arduboy2Audio::audio_enabled = true;
 void Arduboy2Audio::on() { audio_enabled = true; }
 void Arduboy2Audio::off() { audio_enabled = false; }
 void Arduboy2Audio::toggle() { audio_enabled = !audio_enabled; }
 void Arduboy2Audio::saveOnOff() {}
-bool Arduboy2Audio::enabled() const { return audio_enabled; }
+bool Arduboy2Audio::enabled() { return audio_enabled; }
 void Arduboy2Audio::begin() { audio_enabled = true; }
-
-// --- ArduboyTones ---
-ArduboyTones::ArduboyTones(bool (*outEn)()) {}
-void ArduboyTones::tone(uint16_t freq, uint16_t dur) {
-    m_freq1 = freq; m_dur1 = dur;
-    m_freq2 = 0; m_dur2 = 0;
-    m_startMs = millis();
-    AudioEngine::getInstance().playTone(freq, 0);
-}
-void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2) {
-    m_freq1 = freq1; m_dur1 = dur1;
-    m_freq2 = freq2; m_dur2 = dur2;
-    m_startMs = millis();
-    AudioEngine::getInstance().playTone(freq1, freq2);
-}
-void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2, uint16_t freq3, uint16_t dur3) {
-    tone(freq1, dur1, freq2, dur2);
-}
-void ArduboyTones::noTone() {
-    m_freq1 = 0; m_freq2 = 0;
-    AudioEngine::getInstance().stopTone();
-}
-bool ArduboyTones::playing() { return m_freq1 > 0 || m_freq2 > 0; }
-void ArduboyTones::update() {
-    if (m_freq1 > 0 && millis() - m_startMs >= m_dur1) {
-        if (m_freq2 > 0) {
-            m_freq1 = m_freq2; m_dur1 = m_dur2;
-            m_freq2 = 0; m_dur2 = 0;
-            m_startMs = millis();
-            AudioEngine::getInstance().playTone(m_freq1, 0);
-        } else {
-            noTone();
-        }
-    }
-    AudioEngine::getInstance().update();
-}
 
 // --- BeepPin1 ---
 BeepPin1::BeepPin1() {}
@@ -255,6 +220,18 @@ void Arduboy2ESP::syncAudioTimers() {
 // --- Arduboy2ESP ---
 uint8_t Arduboy2ESP::sBuffer[::WIDTH * ::HEIGHT / 8];
 
+bool Arduboy2ESP::collide(Point point, Rect rect) {
+    return ((point.x >= rect.x) && (point.x < rect.x + rect.width) &&
+            (point.y >= rect.y) && (point.y < rect.y + rect.height));
+}
+
+bool Arduboy2ESP::collide(Rect rect1, Rect rect2) {
+    return !(rect2.x                >= rect1.x + rect1.width  ||
+             rect2.x + rect2.width  <= rect1.x                ||
+             rect2.y                >= rect1.y + rect1.height ||
+             rect2.y + rect2.height <= rect1.y);
+}
+
 Arduboy2ESP::Arduboy2ESP() {
     clear();
 }
@@ -328,7 +305,44 @@ bool Arduboy2ESP::everyXFrames(uint8_t frames) {
 int Arduboy2ESP::cpuLoad() { return 10; } // Very low load natively!
 
 void Arduboy2ESP::initRandomSeed() {
-    srand((unsigned int)esp_timer_get_time());
+    randomSeed(esp_timer_get_time());
+}
+
+ArduboyTones::ArduboyTones(bool (*outEn)()) {}
+void ArduboyTones::tone(uint16_t freq, uint16_t dur) {
+    m_freq1 = freq; m_dur1 = dur;
+    m_freq2 = 0; m_dur2 = 0;
+    m_startMs = millis();
+    AudioEngine::getInstance().playTone(freq, 0);
+}
+void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2) {
+    m_freq1 = freq1; m_dur1 = dur1;
+    m_freq2 = freq2; m_dur2 = dur2;
+    m_startMs = millis();
+    AudioEngine::getInstance().playTone(freq1, freq2);
+}
+void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2, uint16_t freq3, uint16_t dur3) {
+    tone(freq1, dur1, freq2, dur2);
+}
+void ArduboyTones::tones(const uint16_t *tones) {}
+void ArduboyTones::tonesInRAM(uint16_t *tones) {}
+void ArduboyTones::noTone() {
+    m_freq1 = 0; m_freq2 = 0;
+    AudioEngine::getInstance().stopTone();
+}
+bool ArduboyTones::playing() { return m_freq1 > 0 || m_freq2 > 0; }
+void ArduboyTones::update() {
+    if (m_freq1 > 0 && millis() - m_startMs >= m_dur1) {
+        if (m_freq2 > 0) {
+            m_freq1 = m_freq2; m_dur1 = m_dur2;
+            m_freq2 = 0; m_dur2 = 0;
+            m_startMs = millis();
+            AudioEngine::getInstance().playTone(m_freq1, 0);
+        } else {
+            noTone();
+        }
+    }
+    AudioEngine::getInstance().update();
 }
 
 void Arduboy2ESP::clearButtonState() {
@@ -636,7 +650,7 @@ void Arduboy2ESP::drawChar(int16_t x, int16_t y, unsigned char c, uint8_t color,
     }
 }
 
-void Arduboy2ESP::write(uint8_t c) {
+size_t Arduboy2ESP::write(uint8_t c) {
     if (c == '\n') {
         m_cursorY += m_textSize * 8;
         m_cursorX = 0;
@@ -649,37 +663,9 @@ void Arduboy2ESP::write(uint8_t c) {
             write('\n');
         }
     }
+    return 1;
 }
 
-void Arduboy2ESP::print(const char* str) {
-    if (!str) return;
-    while (*str) write((uint8_t)*str++);
-}
-
-void Arduboy2ESP::print(int val) {
-    char buf[16];
-    snprintf(buf, sizeof(buf), "%d", val);
-    print(buf);
-}
-
-void Arduboy2ESP::print(long val) {
-    char buf[32];
-    snprintf(buf, sizeof(buf), "%ld", val);
-    print(buf);
-}
-
-void Arduboy2ESP::print(unsigned long val) {
-    char buf[32];
-    snprintf(buf, sizeof(buf), "%lu", val);
-    print(buf);
-}
-
-void Arduboy2ESP::println(const char* str) {
-    print(str);
-    write('\n');
-}
-
-void Arduboy2ESP::println(int val) {
-    print(val);
-    write('\n');
-}
+#include "../../include/types.h"
+__attribute__((weak)) SystemContext sysContext;
+__attribute__((weak)) SemaphoreHandle_t g_i2cMutex = NULL;

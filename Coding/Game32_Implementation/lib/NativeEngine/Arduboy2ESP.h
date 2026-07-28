@@ -10,10 +10,58 @@
 #include "DisplayManager.h"
 #include "InputManager.h"
 #include "AudioEngine.h"
+#include "Sprites.h"
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
+#include "Print.h"
+#include "AVRCompat.h"
+#endif
+#include "ArduboyTonesPitches.h"
 
 // --- Arduino & AVR Compatibility Defines for ESP32 ---
 #ifndef PROGMEM
 #define PROGMEM
+#endif
+
+#include <type_traits>
+#ifdef ARDUINO
+#undef pgm_read_word
+#undef pgm_read_word_near
+
+template <typename T>
+inline typename std::enable_if<std::is_pointer<T>::value, T>::type
+arduboy_pgm_read_word(const T* addr) {
+    return (T)pgm_read_ptr(addr);
+}
+
+template <typename T>
+inline typename std::enable_if<!std::is_pointer<T>::value, uint16_t>::type
+arduboy_pgm_read_word(const T* addr) {
+    return *(const uint16_t*)addr;
+}
+
+template <typename T>
+inline typename std::enable_if<std::is_pointer<T>::value, T>::type
+arduboy_pgm_read_word(T* addr) {
+    return (T)pgm_read_ptr(addr);
+}
+
+template <typename T>
+inline typename std::enable_if<!std::is_pointer<T>::value, uint16_t>::type
+arduboy_pgm_read_word(T* addr) {
+    return *(const uint16_t*)addr;
+}
+
+inline uint16_t arduboy_pgm_read_word(uint32_t addr) {
+    return *(const uint16_t*)addr;
+}
+inline uint16_t arduboy_pgm_read_word(int addr) {
+    return *(const uint16_t*)addr;
+}
+
+#define pgm_read_word(addr) arduboy_pgm_read_word(addr)
+#define pgm_read_word_near(addr) arduboy_pgm_read_word(addr)
 #endif
 
 #ifndef PSTR
@@ -29,7 +77,10 @@
 #endif
 
 #ifndef pgm_read_word
-#define pgm_read_word(addr) (*(const uint16_t*)(addr))
+inline uint16_t _pgm_read_word(const void* addr) { return *(const uint16_t*)addr; }
+inline const uint8_t* _pgm_read_word(const uint8_t* const* addr) { return *addr; }
+inline const uint8_t* _pgm_read_word(uint8_t* const* addr) { return *addr; }
+#define pgm_read_word(addr) _pgm_read_word(addr)
 #endif
 
 #ifndef pgm_read_ptr
@@ -40,21 +91,11 @@
 #define _BV(bit) (1 << (bit))
 #endif
 
-typedef uint8_t byte;
-typedef uint16_t word;
-typedef bool boolean;
-
-inline long random(long maxVal) {
-    if (maxVal == 0) return 0;
-    return ::random() % maxVal;
-}
-inline long random(long minVal, long maxVal) {
-    if (minVal >= maxVal) return minVal;
-    return minVal + (::random() % (maxVal - minVal));
-}
+// byte, word, boolean, random are provided by the real Arduino.h
 
 class __FlashStringHelper;
 
+#ifndef ARDUBOY2_NO_POINT
 struct Point {
     int16_t x{0};
     int16_t y{0};
@@ -66,6 +107,7 @@ struct Rect {
     constexpr Rect() = default;
     constexpr Rect(int16_t _x, int16_t _y, int16_t _w, int16_t _h) : x(_x), y(_y), width(_w), height(_h) {}
 };
+#endif
 
 constexpr int WIDTH = 128;
 constexpr int HEIGHT = 64;
@@ -74,6 +116,11 @@ constexpr int HEIGHT = 64;
 #define BLACK 0
 #define WHITE 1
 #define INVERT 2
+
+// --- Arduboy LEDs ---
+#define RED_LED 10
+#define GREEN_LED 11
+#define BLUE_LED 9
 
 // --- Arduboy Button Bitmasks ---
 #define UP_BUTTON     0x08
@@ -100,26 +147,33 @@ extern volatile uint16_t TCCR4A, TCCR4B, OCR4A, OCR4C;
 // --- Arduboy Audio Control ---
 class Arduboy2Audio {
 public:
-    void on();
-    void off();
-    void toggle();
-    void saveOnOff();
-    bool enabled() const;
-    void begin();
+    static void on();
+    static void off();
+    static void toggle();
+    static void saveOnOff();
+    static bool enabled();
+    static void begin();
 protected:
-    bool audio_enabled{true};
+    static bool audio_enabled;
 };
 
-// --- Arduboy Tones / Sound ---
+typedef Arduboy2Audio ArduboyAudio;
+
+
 class ArduboyTones {
 public:
     ArduboyTones(bool (*outEn)() = nullptr);
     void tone(uint16_t freq, uint16_t dur);
     void tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2);
     void tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2, uint16_t freq3, uint16_t dur3);
+    void tones(const uint16_t *tones);
+    void tonesInRAM(uint16_t *tones);
     void noTone();
     bool playing();
-    void update(); // Must be called periodically
+    void update();
+    void initChannel(uint8_t channel) {}
+    void playScore(const uint8_t* score) {}
+    void stopScore() {}
 private:
     uint16_t m_freq1{0}, m_dur1{0};
     uint16_t m_freq2{0}, m_dur2{0};
@@ -136,6 +190,7 @@ public:
     void tone(uint16_t count, uint8_t dur);
     void timer(); // Called in game loop
     void noTone();
+    static uint16_t freq(float hz) { return hz > 0 ? (uint16_t)(1000000.0f / hz) : 0; }
 private:
     uint8_t m_duration{0};
     uint32_t m_lastTick{0};
@@ -149,15 +204,18 @@ public:
     void tone(uint16_t count, uint8_t dur);
     void timer(); // Called in game loop
     void noTone();
+    static uint16_t freq(float hz) { return hz > 0 ? (uint16_t)(1000000.0f / hz) : 0; }
 private:
     uint8_t m_duration{0};
     uint32_t m_lastTick{0};
 };
 
 // --- Arduboy2 Core & Graphics Engine ---
-class Arduboy2ESP {
+class Arduboy2ESP : public Print {
 public:
     Arduboy2ESP();
+    bool collide(Point point, Rect rect);
+    bool collide(Rect rect1, Rect rect2);
     void begin();
     void beginNoLogo();
     void boot() { begin(); }
@@ -205,6 +263,9 @@ public:
     void drawFastHLine(int16_t x, int16_t y, int16_t w, uint8_t color = WHITE);
     void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color = WHITE);
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color = WHITE);
+    void fillScreen(uint8_t color = WHITE) { if (color == BLACK) clear(); else fillRect(0, 0, WIDTH, HEIGHT, color); }
+    void sendLCDCommand(uint8_t command) {}
+    void delayShort(uint16_t ms) { delay(ms / 3); }
     void drawCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color = WHITE);
     void fillCircle(int16_t x0, int16_t y0, int16_t r, uint8_t color = WHITE);
     void drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint8_t color);
@@ -222,55 +283,46 @@ public:
     void setTextColor(uint8_t color);
     void setTextSize(uint8_t s);
     void setTextBackground(uint8_t bg);
-    void write(uint8_t c);
-    void print(const char* str);
-    void print(int val);
-    void print(long val);
-    void print(unsigned long val);
-    void println(const char* str = "");
-    void println(int val);
+    uint8_t getTextColor() const { return m_textColor; }
+    uint8_t getTextBackground() const { return m_textBgColor; }
+    uint8_t getTextSize() const { return m_textSize; }
+    int16_t getCursorX() const { return m_cursorX; }
+    int16_t getCursorY() const { return m_cursorY; }
+    size_t write(uint8_t c) override;
     void drawChar(int16_t x, int16_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size);
 
     // Audio instance
     Arduboy2Audio audio;
+    ArduboyTones tunes;
 
     // Standard Arduboy public/protected members for direct access
     uint8_t currentButtonState{0};
     uint8_t previousButtonState{0};
     uint8_t frameCount{0};
 
-private:
+protected:
     uint8_t m_frameRate{60};
     uint32_t m_lastFrameTimeMs{0};
     uint32_t m_frameDurationMs{16};
-    int16_t m_cursorX{0};
-    int16_t m_cursorY{0};
-    uint8_t m_textColor{WHITE};
-    uint8_t m_textBgColor{BLACK};
-    uint8_t m_textSize{1};
+public:
+    union { int16_t m_cursorX; int16_t cursor_x; };
+    union { int16_t m_cursorY; int16_t cursor_y; };
+    union { uint8_t m_textColor; uint8_t textColor; };
+    union { uint8_t m_textBgColor; uint8_t textBackground; };
+    union { uint8_t m_textSize; uint8_t textSize; uint8_t textsize; };
+    union { bool m_textWrap; bool textWrap; bool wrap; };
 };
 
 typedef Arduboy2ESP Arduboy2;
 typedef Arduboy2ESP Arduboy2Base;
+typedef Arduboy2ESP Arduboy;
 
-// Arduino Timing Utilities
-inline unsigned long millis() {
-    return (unsigned long)(esp_timer_get_time() / 1000);
-}
-inline unsigned long micros() {
-    return (unsigned long)(esp_timer_get_time());
-}
-inline void delay(unsigned long ms) {
-    unsigned long start = millis();
-    while (millis() - start < ms) {
-        vTaskDelay(1);
-    }
-}
-inline void delayMicroseconds(unsigned int us) {
-    unsigned long start = micros();
-    while (micros() - start < us) {
-        // Busy wait
-    }
-}
+// Timing utilities are provided by real Arduino.h
+
+#ifndef HAS_EEPROM_STUBS
+inline void initEEPROM(bool clear) { (void)clear; }
+inline int EEPROMReadInt(int address) { (void)address; return 0; }
+inline void EEPROMWriteInt(int address, int val) { (void)address; (void)val; }
+#endif
 
 #endif // ARDUBOY2_ESP_H

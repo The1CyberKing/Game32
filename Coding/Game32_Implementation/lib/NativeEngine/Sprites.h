@@ -13,6 +13,4 @@ public:
     static void drawAnimate(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame);
 };
 
-typedef Sprites SpritesB;
-
 #endif // SPRITES_H

@@ -3,5 +3,6 @@
 
 #include "Arduboy2ESP.h"
 #include "Sprites.h"
+#include "SpritesB.h"
 
 #endif // ARDUBOY2_H

@@ -1,11 +1,16 @@
 #ifndef PRINT_H
 #define PRINT_H
 
+#ifdef ARDUINO
+#include_next <Print.h>
+#else
+
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <cstdio>
-#include "Arduboy2ESP.h"
+
+class __FlashStringHelper;
 
 class Print {
 public:
@@ -80,5 +85,7 @@ public:
         return n;
     }
 };
+
+#endif // ARDUINO
 
 #endif // PRINT_H

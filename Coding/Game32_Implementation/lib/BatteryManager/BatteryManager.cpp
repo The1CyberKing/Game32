@@ -2,9 +2,11 @@
 #include "types.h"
 #include <algorithm>
 #include <rom/ets_sys.h> // Required for microsecond hardware delays
+#ifndef ARDUINO
 #include "esp_adc/adc_oneshot.h"
 
 static adc_oneshot_unit_handle_t adc1_handle = nullptr;
+#endif
 
 BatteryManager& BatteryManager::getInstance() {
     static BatteryManager instance;
@@ -12,6 +14,7 @@ BatteryManager& BatteryManager::getInstance() {
 }
 
 void BatteryManager::initialize() {
+#ifndef ARDUINO
     adc_oneshot_unit_init_cfg_t init_config = {};
     init_config.unit_id = ADC_UNIT_1;
     init_config.ulp_mode = ADC_ULP_MODE_DISABLE;
@@ -21,9 +24,11 @@ void BatteryManager::initialize() {
     config.atten = ADC_ATTEN_DB_12;
     config.bitwidth = ADC_BITWIDTH_12;
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC_CHANNEL_6, &config));
+#endif
 }
 
 void BatteryManager::updateService() {
+#ifndef ARDUINO
     if (adc1_handle == nullptr) return;
 
     for (uint8_t i = 0; i < BATTERY_SAMPLE_COUNT; ++i) {
@@ -34,6 +39,7 @@ void BatteryManager::updateService() {
     }
 
     std::sort(m_samples, m_samples + BATTERY_SAMPLE_COUNT);
+#endif
 
     uint32_t accumulator = 0;
     constexpr uint8_t start_index = BATTERY_OUTLIER_DROP;
